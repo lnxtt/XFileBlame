@@ -74,7 +74,7 @@ class XFileBlameMa:
         else:
             self.oldFiles.extend(self.files_found)
             self.files_found = []
-            self.sendEmail(self.results, 'XFileBlame has found new wanted files')
+            self.sendEmail(self.results, 'XFileBlame has found new searched files')
 
     def blameAgain(self):
         if self.timetw != '':  # checks if a search should be repeat
