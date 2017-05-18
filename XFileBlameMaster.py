@@ -41,7 +41,7 @@ class XFileBlameMa:
     def blameFiles(self):
         print('looking for files in with extension: ' + str(tuple(self.fileExtensions)) + 'in ' + self.rootDirectory + ' time: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
         try:
-            for dirpath, dirnames, files in os.walk(self.rootDirectory):  # goes to evry directory in the given location and checks for wanted files
+            for dirpath, dirnames, files in os.walk(self.rootDirectory):  # goes to every directory in the given location and checks for searched files
                 for f in files:
                     if os.path.join(dirpath, f) in self.oldFiles:
                         pass
@@ -61,7 +61,7 @@ class XFileBlameMa:
                                 print('file found: ' + erg)
                                 self.results += erg + '\n'
                         except Exception:
-                            pass    # e.g. files the user has no right to check the size of get skipped
+                            pass    # e.g. Files to which the user has no right to check the size are omitted
         except Exception:
             print('An Error accorded in search number: ' + str(self.timesChecked))
             if not self.errorAccorded:
@@ -69,7 +69,7 @@ class XFileBlameMa:
                 self.sendEmail('An Error accorded in search number: ' + str(self.timesChecked), 'Error in XFileBlame while searching')
 
         self.timesChecked += 1
-        if not self.files_found:  # then no was file found
+        if not self.files_found:  # then no file was found
             self.blameAgain()
         else:
             self.oldFiles.extend(self.files_found)
@@ -77,7 +77,7 @@ class XFileBlameMa:
             self.sendEmail(self.results, 'XFileBlame has found new wanted files')
 
     def blameAgain(self):
-        if self.timetw != '':  # checks if a search should repeat
+        if self.timetw != '':  # checks if a search should be repeat
             if self.timesChecked >= (43200/int(self.timetw)):  # clears the known list of files (oldfiles) every 30 days
                 self.timesChecked = 0
                 self.oldFiles = []
