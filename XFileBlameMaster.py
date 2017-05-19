@@ -48,6 +48,7 @@ class XFileBlameMa:
                     else:
                         change = False
                         filePath = os.path.join(dirpath, f)
+                        print('checking directory: ' + str(dirpath)[:35], end="\r"),
                         try:
                             if os.path.getsize(filePath) > self.suspiciousSize:
                                 if not self.extensionType == 4:
@@ -86,6 +87,7 @@ class XFileBlameMa:
             time.sleep(int(self.timetw))
             self.blameFiles()
         else:
+            print(' '*56, end="\r")  # keeps the command line clear of output after exit
             sys.exit(0)
 
     def sendEmail(self, message, title):
