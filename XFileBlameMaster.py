@@ -105,6 +105,6 @@ class XFileBlameMa:
                     sys.exit(0)
             else:
                 self.blameAgain()
-        except Exception:
-            print('failed to send Email')
+        except Exception as error:
+            print('failed to send Email ' + str(error))
         self.blameAgain()
