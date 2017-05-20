@@ -51,18 +51,18 @@ for i in range(0, len(sys.argv)):#checks the input
             print('unable to set the E-Mail contact address - abort')
             sys.exit(0)
     if arg == '-i':
-            if val != 0 and val != '' and str.isdigit(val):
+            if val != 0 and str.isdigit(val):
                 try:
                     interval = str(val)
                 except Exception:
                     print('unable to set the interval - Going on without it')
             else:
-                print('0 or '' is not a valid interval')
+                print('Input of a valid interval not found (Did you inserted 0 ?)')
                 sys.exit(0)
     if os.path.isdir(arg):
         rootDir = arg
     if arg == '-m' or arg == '-p' or arg == '-mp' or arg == '-s':
-        if val != '' and str.isdigit(val):
+        if str.isdigit(val):
             try:
                 suspiciousSize = str(val)
             except Exception:
