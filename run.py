@@ -51,7 +51,7 @@ for i in range(0, len(sys.argv)):#checks the input
             print('unable to set the E-Mail contact address - abort')
             sys.exit(0)
     if arg == '-i':
-            if val != 0 and val != '':
+            if val != 0 and val != '' and str.isdigit(val):
                 try:
                     interval = str(val)
                 except Exception:
@@ -62,7 +62,7 @@ for i in range(0, len(sys.argv)):#checks the input
     if os.path.isdir(arg):
         rootDir = arg
     if arg == '-m' or arg == '-p' or arg == '-mp' or arg == '-s':
-        if val != '':
+        if val != '' and str.isdigit(val):
             try:
                 suspiciousSize = str(val)
             except Exception:
