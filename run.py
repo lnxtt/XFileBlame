@@ -18,7 +18,7 @@ With:
      in the XFileBlameMaster.py
   -i you set the interval (in seconds) in which a search will be repeated
 
-Type the type of arguments:
+Type giving arguments:
   -m sets the file types to movies
   -p sets the file types to programs
   -mp searches both
