@@ -71,10 +71,12 @@ class XFileBlameMa:
 
         self.timesChecked += 1
         if not self.files_found:  # then no file was found
+            print('Search finished')
             self.blameAgain()
         else:
             self.oldFiles.extend(self.files_found)
             self.files_found = []
+            print('Search finished')
             self.sendEmail(self.results, 'XFileBlame has found new searched files')
 
     def blameAgain(self):
