@@ -68,15 +68,14 @@ class XFileBlameMa:
             if not self.errorAccorded:
                 self.errorAccorded = True
                 self.sendEmail('An Error accorded in search number: ' + str(self.timesChecked), 'Error in XFileBlame while searching')
-
         self.timesChecked += 1
+        print('Search finished')
+        print(' '*56, end="\r")  # keeps the command line clear of output
         if not self.files_found:  # then no file was found
-            print('Search finished')
             self.blameAgain()
         else:
             self.oldFiles.extend(self.files_found)
             self.files_found = []
-            print('Search finished')
             self.sendEmail(self.results, 'XFileBlame has found new searched files')
 
     def blameAgain(self):
@@ -89,7 +88,6 @@ class XFileBlameMa:
             time.sleep(int(self.timetw))
             self.blameFiles()
         else:
-            print(' '*56, end="\r")  # keeps the command line clear of output after exit
             sys.exit(0)
 
     def sendEmail(self, message, title):
