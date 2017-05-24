@@ -18,18 +18,20 @@ class XFileBlameMa:
     extensionType = 1
     timesChecked = 0
     errorAccorded = False
+    useOutput = False
 
     smtpServer = 'mail.yourprovider.net'
     smtpport = 587
     loginEmail = 'foo@bar.com'
     loginPassword = 'yourpassword!!'
 
-    def __init__(self, rootDirectory, timetw, emailContact, suspiciousSize,extensionType):
+    def __init__(self, rootDirectory, timetw, emailContact, suspiciousSize, extensionType, useOutput):
         self.rootDirectory = rootDirectory
         self.timetw = timetw
         self.extensionType = extensionType
         self.emailContact = emailContact
         self.suspiciousSize = int(suspiciousSize) * 1000000
+        self.useOutput = useOutput
         if extensionType == 1:
             self.fileExtensions = ['.mp4', '.avi', '.mkv', '.wmv', '.ts']
         elif extensionType == 2:
@@ -48,7 +50,8 @@ class XFileBlameMa:
                     else:
                         change = False
                         filePath = os.path.join(dirpath, f)
-                        print('checking directory: ' + str(dirpath)[:35], end="\r"),
+                        if self.useOutput:
+                            print('checking directory: ' + str(dirpath)[:35], end="\r"),
                         try:
                             if os.path.getsize(filePath) > self.suspiciousSize:
                                 if not self.extensionType == 4:
@@ -59,7 +62,8 @@ class XFileBlameMa:
                             if change:  # prints live output of found files and adds them to result
                                 self.files_found.append(filePath)
                                 erg = (str(filePath) + ' ' + str(os.path.getsize(filePath) >> 20) + 'mb')
-                                print('file found: ' + erg)
+                                if self.useOutput:
+                                    print('file found: ' + erg)
                                 self.results += erg + '\n'
                         except Exception:
                             pass    # e.g. Files to which the user has no right to check the size are omitted
@@ -69,8 +73,9 @@ class XFileBlameMa:
                 self.errorAccorded = True
                 self.sendEmail('An Error accorded in search number: ' + str(self.timesChecked), 'Error in XFileBlame while searching')
         self.timesChecked += 1
-        print('Search finished')
         print(' '*56, end="\r")  # keeps the command line clear of output
+        print('Search finished')
+        print(self.results)
         if not self.files_found:  # then no file was found
             self.blameAgain()
         else:
@@ -79,7 +84,7 @@ class XFileBlameMa:
             self.sendEmail(self.results, 'XFileBlame has found new searched files')
 
     def blameAgain(self):
-        if self.timetw != '':  # checks if a search should be repeat
+        if self.timetw != '':  # checks if a search should be repeated
             if self.timesChecked >= (43200/int(self.timetw)):  # clears the known list of files (oldfiles) every 30 days
                 self.timesChecked = 0
                 self.oldFiles = []

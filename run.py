@@ -7,16 +7,19 @@ interval = ''
 emailContact = ''
 suspiciousSize = 0
 extensionType = 1
+useOutput = False
 
 help = """
 You're using XFileBlame by Marvin Plum.
-This programm searches for files with a specific attribute (file-extension or size) and tells you their location.
+This program searches for files with a specific attribute (file-extension or size) and tells you their location.
 By default, it searches for movies contained in / without repeating or email warning.
 With:
   -e you set an email with that you are contacted when a searched file was found
      To use this feature, you must complete e-mail credentials (the  email XFileBlame should send you the data from)
      in the XFileBlameMaster.py
   -i you set the interval (in seconds) in which a search will be repeated
+  -o XfileBlame will show you live output(Currently analysed directory/Last found file) - You will still see if a
+     search begins or ends(all found files will be printed if that happens) 
 
 Type giving arguments:
   -m sets the file types to movies
@@ -25,10 +28,10 @@ Type giving arguments:
   -s is looking for storage hungry files
   The minimum file size in mb can be given after all
 
-To search in a non-standard directory, just write the directorypath into the arguments.
+To search in a non-standard directory, just write the directory path into the arguments.
 
 Example:
-Python run.py / home / -i 300 -e foo@bar.com -s 1000
+python3 run.py / home / -i 300 -e foo@bar.com -s 1000 -o
 
 Note :
 I am not responsible for illegal acts you do with this program.
@@ -75,6 +78,8 @@ for i in range(0, len(sys.argv)):#checks the input
         extensionType = 3
     if arg == '-s':
         extensionType = 4
+    if arg == '-o':
+        useOutput = True
     if arg == '-help' or arg == '--help' or arg == '-?':
         print(help)
         sys.exit(0)
@@ -84,7 +89,7 @@ if not os.path.isdir(str(rootDir)):
     sys.exit(0)
 
 try:
-    XFB = XFileBlameMaster.XFileBlameMa(rootDir, interval, emailContact, suspiciousSize, extensionType)
+    XFB = XFileBlameMaster.XFileBlameMa(rootDir, interval, emailContact, suspiciousSize, extensionType, useOutput)
     XFB.blameFiles()
 except Exception:
     print('unable to call XFileBlameMaster - abort')
