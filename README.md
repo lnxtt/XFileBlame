@@ -8,34 +8,31 @@ By default, it searches for movies contained in / without repeating or email war
 
 With:
 
-  -e you set an email with that you are contacted when a searched file was found
+   -e you set an email with that you are contacted when a searched file was found
      To use this feature, you must complete e-mail credentials (the  email XFileBlame should send you the data from)
      in the XFileBlameMaster.py
      
-  -i you set the interval (in seconds) in which a search will be repeated
+   -i you set the interval (in seconds) in which a search will be repeated
   
-    -o XfileBlame will show you live output(Currently analysed directory/Last found file) - You will still see if a
-     search begins or ends(all found files will be printed if that happens)
+   -o XfileBlame will show you live output(Currently analysed directory/Last found file) - You will still see if a
+      search begins or ends(all found files will be printed if that happens)
      
-     After -0 you can give the arguments[0,1,2]
-     
-        0 = only errors 
-        
-        1 = 0 + minimum output(search begin,end,results)
-        
-        2 = all output
-        
-     1 is default
+   After -0 you can give the arguments[0,1,2]
+   
+    0 = only errors     
+    1 = 0 + minimum output(search begin,end,results)
+    2 = all output
+    1 is default
 
 Type giving arguments:
 
-  -m sets the file types to movies
+    -m sets the file types to movies
   
-  -p sets the file types to programs
+    -p sets the file types to programs
   
-  -mp searches both
+    -mp searches both
   
-  -s is looking for storage hungry files
+    -s is looking for storage hungry files
   
   The minimum file size in mb can be given after all
 
@@ -43,7 +40,7 @@ To search in a non-standard directory, just write the directory path into the ar
 
 Example:
 
-python3 run.py / home / -i 300 -e foo@bar.com -s 1000 -o
+    python3 run.py / home / -i 300 -e foo@bar.com -s 1000 -o
 
 Note :
 
