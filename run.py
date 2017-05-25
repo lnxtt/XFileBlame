@@ -7,7 +7,7 @@ interval = ''
 emailContact = ''
 suspiciousSize = 0
 extensionType = 1
-useOutput = False
+outputLevel = 1
 
 help = """
 You're using XFileBlame by Marvin Plum.
@@ -19,7 +19,12 @@ With:
      in the XFileBlameMaster.py
   -i you set the interval (in seconds) in which a search will be repeated
   -o XfileBlame will show you live output(Currently analysed directory/Last found file) - You will still see if a
-     search begins or ends(all found files will be printed if that happens) 
+     search begins or ends(all found files will be printed if that happens)
+     After -0 you can give the arguments[0,1,2]
+        0 = only errors 
+        1 = 0 + minimum output(search begin,end,results)
+        2 = all output
+     1 is default
 
 Type giving arguments:
   -m sets the file types to movies
@@ -42,34 +47,19 @@ for i in range(0, len(sys.argv)):#checks the input
     arg = sys.argv[i]
     val = ''
     if i < (len(sys.argv) - 1):#used to check if an value is given behind an argument
-        val = sys.argv[i + 1]
+        val = str(sys.argv[i + 1])
     if arg == '-e':
         try:
             if val != '':
-                emailContact = str(val)
+                emailContact = val
             else:
                 print('No Email input after -e')
                 sys.exit(0)
         except Exception:
             print('unable to set the E-Mail contact address - abort')
             sys.exit(0)
-    if arg == '-i':
-            if val != 0 and str.isdigit(val):
-                try:
-                    interval = str(val)
-                except Exception:
-                    print('unable to set the interval - Going on without it')
-            else:
-                print('Input of a valid interval not found (Did you inserted 0 ?)')
-                sys.exit(0)
     if os.path.isdir(arg):
         rootDir = arg
-    if arg == '-m' or arg == '-p' or arg == '-mp' or arg == '-s':
-        if str.isdigit(val):
-            try:
-                suspiciousSize = str(val)
-            except Exception:
-                print('unable to set the suspicious file size - Going on without it')
     if arg == '-m':
         extensionType = 1
     if arg == '-p':
@@ -78,8 +68,30 @@ for i in range(0, len(sys.argv)):#checks the input
         extensionType = 3
     if arg == '-s':
         extensionType = 4
-    if arg == '-o':
-        useOutput = True
+    if str.isdigit(val):
+        if int(val) > 0:
+            if arg == '-i':
+                try:
+                    interval = val
+                except Exception:
+                    print('unable to set the interval - Going on without it')
+            else:
+                print('Input of a valid interval not found (Did you inserted 0 ?)')
+                sys.exit(0)
+        if int(val) >= 0:
+            if arg == '-m' or arg == '-p' or arg == '-mp' or arg == '-s':
+                try:
+                    suspiciousSize = val
+                except Exception:
+                    print('unable to set the suspicious file size - Going on with 0 mb')
+            if arg == '-o':
+                try:
+                    if int(val) <= 2:
+                        outputLevel = val
+                    else:
+                        print(val + ' is not a valid output level[0,1,2] - use --help to learn more')
+                except Exception:
+                    print('unable to set the output level - Going on with level 1')
     if arg == '-help' or arg == '--help' or arg == '-?':
         print(help)
         sys.exit(0)
@@ -89,8 +101,8 @@ if not os.path.isdir(str(rootDir)):
     sys.exit(0)
 
 try:
-    XFB = XFileBlameMaster.XFileBlameMa(rootDir, interval, emailContact, suspiciousSize, extensionType, useOutput)
+    XFB = XFileBlameMaster.XFileBlameMa(rootDir, interval, emailContact, suspiciousSize, extensionType, outputLevel)
     XFB.blameFiles()
-except Exception:
-    print('unable to call XFileBlameMaster - abort')
+except Exception as error:
+    print('unable to call XFileBlameMaster - abort | error : ' + str(error))
     sys.exit(0)
