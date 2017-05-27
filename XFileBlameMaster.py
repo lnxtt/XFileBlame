@@ -39,26 +39,25 @@ class XFileBlameMa:
             print('looking for files in with extension: ' + str(tuple(self.fileExtensions)) + 'in ' + self.rootDirectory + ' time: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
         try:  # begin of the search itself
-            for entry in self.scanDirectory(self.rootDirectory):  # goes to every directory in the given location and checks for searched files
-                if entry.path in self.oldFiles:
+            for file in self.scanDirectory(self.rootDirectory):  # goes to every directory in the given location and checks for searched files
+                if file.path in self.oldFiles:
                     pass
                 else:
                     change = False
-                    filePath = entry.path
                     if self.outputLevel >= 2:
                         print('checking directory: ' + str(entry.path)[:35], end="\r"),
                     try:
-                        if os.path.getsize(filePath) > self.suspiciousSize:
+                        if os.path.getsize(file.path) > self.suspiciousSize:
                             if not self.extensionType == 4:
-                                if entry.name.endswith(tuple(self.fileExtensions)):
+                                if file.name.endswith(tuple(self.fileExtensions)):
                                     change = True
                             else:
                                 change = True
                     except Exception:  # to pass files with errors like: permission denied
                         pass
                     if change:  # prints live output of found files and adds them to result
-                        self.files_found.append(filePath)
-                        erg = (str(filePath) + ' ' + str(os.path.getsize(filePath) >> 20) + 'mb')
+                        self.files_found.append(file.path)
+                        erg = (str(file.path) + ' ' + str(os.path.getsize(file.path) >> 20) + 'mb')
                         if self.outputLevel >= 2:
                             print('file found: ' + erg)
                         self.results += erg + '\n'
@@ -103,7 +102,7 @@ class XFileBlameMa:
         try:    # to pass files with errors like: permission denied
             for entry in os.scandir(path):
                 if entry.is_dir(follow_symlinks=False):
-                    yield from self.scanDirectory(entry.path)  # see below for Python 2.x
+                    yield from self.scanDirectory(entry.path)
                 else:
                     yield entry
         except Exception:
