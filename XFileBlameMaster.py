@@ -36,33 +36,32 @@ class XFileBlameMa:
 
     def blameFiles(self):
         if self.outputLevel >= 1:  # 0=only errors / 1=0+minimum output(search begin,end,results) / 2=all output
-            print('looking for files in with extension: ' + str(tuple(self.fileExtensions)) + 'in ' + self.rootDirectory + ' time: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
+            print('looking for files in with extension: ' + str(tuple(self.fileExtensions)) + 'in ' + self.rootDirectory + ' time: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
         try:  # begin of the search itself
-            for dirpath, dirnames, files in os.walk(self.rootDirectory):  # goes to every directory in the given location and checks for searched files
-                for f in files:
-                    if os.path.join(dirpath, f) in self.oldFiles:
-                        pass
-                    else:
-                        change = False
-                        filePath = os.path.join(dirpath, f)
-                        if self.outputLevel >= 2:
-                            print('checking directory: ' + str(dirpath)[:35], end="\r"),
-                        try:
-                            if os.path.getsize(filePath) > self.suspiciousSize:
-                                if not self.extensionType == 4:
-                                    if f.endswith(tuple(self.fileExtensions)):
-                                        change = True
-                                else:
+            for entry in self.scanDirectory(self.rootDirectory):  # goes to every directory in the given location and checks for searched files
+                if entry.path in self.oldFiles:
+                    pass
+                else:
+                    change = False
+                    filePath = entry.path
+                    if self.outputLevel >= 2:
+                        print('checking directory: ' + str(entry.path)[:35], end="\r"),
+                    try:
+                        if os.path.getsize(filePath) > self.suspiciousSize:
+                            if not self.extensionType == 4:
+                                if entry.name.endswith(tuple(self.fileExtensions)):
                                     change = True
-                            if change:  # prints live output of found files and adds them to result
-                                self.files_found.append(filePath)
-                                erg = (str(filePath) + ' ' + str(os.path.getsize(filePath) >> 20) + 'mb')
-                                if self.outputLevel >= 2:
-                                    print('file found: ' + erg)
-                                self.results += erg + '\n'
-                        except Exception:
-                            pass    # e.g. Files to which the user has no right to check the size are omitted
+                            else:
+                                change = True
+                    except Exception:  # to pass files with errors like: permission denied
+                        pass
+                    if change:  # prints live output of found files and adds them to result
+                        self.files_found.append(filePath)
+                        erg = (str(filePath) + ' ' + str(os.path.getsize(filePath) >> 20) + 'mb')
+                        if self.outputLevel >= 2:
+                            print('file found: ' + erg)
+                        self.results += erg + '\n'
 
         except Exception as error:  # handel's errors in search
             print('An Error accorded in search number: ' + str(self.timesChecked) + ' : ' + str(error))
@@ -99,6 +98,16 @@ class XFileBlameMa:
             self.blameFiles()
         else:
             sys.exit(0)
+
+    def scanDirectory(self, path):  # scans the directory with os.scandir
+        try:    # to pass files with errors like: permission denied
+            for entry in os.scandir(path):
+                if entry.is_dir(follow_symlinks=False):
+                    yield from self.scanDirectory(entry.path)  # see below for Python 2.x
+                else:
+                    yield entry
+        except Exception:
+            pass
 
     def sendEmail(self, message, title):
         try:
