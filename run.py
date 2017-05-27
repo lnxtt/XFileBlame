@@ -69,8 +69,8 @@ for i in range(0, len(sys.argv)):#checks the input
     if arg == '-s':
         extensionType = 4
     if str.isdigit(val):
-        if int(val) > 0:
-            if arg == '-i':
+        if arg == '-i':
+            if int(val) > 0:
                 try:
                     interval = val
                 except Exception:
