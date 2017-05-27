@@ -7,31 +7,25 @@ import sys
 
 class XFileBlameMa:
 
-    rootDirectory = ''
-    timetw = ''
     oldFiles = []
     files_found = []
     results = ''
-    emailContact = ''
-    suspiciousSize = 350000
-    fileExtensions = []
-    extensionType = 1
     timesChecked = 0
     errorAccorded = False
-    outputLevel = 1
 
     smtpServer = 'mail.yourprovider.net'
     smtpport = 587
     loginEmail = 'foo@bar.com'
     loginPassword = 'yourpassword!!'
 
-    def __init__(self, rootDirectory, timetw, emailContact, suspiciousSize, extensionType, outputLevel):
+    def __init__(self, rootDirectory='/', timetw='', emailContact='', suspiciousSize=35, extensionType=1, outputLevel=1, useExtension = False):
         self.rootDirectory = rootDirectory
         self.timetw = timetw
         self.extensionType = extensionType
         self.emailContact = emailContact
         self.suspiciousSize = int(suspiciousSize) * 1000000
         self.outputLevel = int(outputLevel)
+        self.useExtension = useExtension
         if extensionType == 1:
             self.fileExtensions = ['.mp4', '.avi', '.mkv', '.wmv', '.ts']
         elif extensionType == 2:
@@ -43,7 +37,8 @@ class XFileBlameMa:
     def blameFiles(self):
         if self.outputLevel >= 1:  # 0=only errors / 1=0+minimum output(search begin,end,results) / 2=all output
             print('looking for files in with extension: ' + str(tuple(self.fileExtensions)) + 'in ' + self.rootDirectory + ' time: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
-        try:
+
+        try:  # begin of the search itself
             for dirpath, dirnames, files in os.walk(self.rootDirectory):  # goes to every directory in the given location and checks for searched files
                 for f in files:
                     if os.path.join(dirpath, f) in self.oldFiles:
@@ -68,22 +63,30 @@ class XFileBlameMa:
                                 self.results += erg + '\n'
                         except Exception:
                             pass    # e.g. Files to which the user has no right to check the size are omitted
-        except Exception as error:
+
+        except Exception as error:  # handel's errors in search
             print('An Error accorded in search number: ' + str(self.timesChecked) + ' : ' + str(error))
             if not self.errorAccorded:
                 self.errorAccorded = True
-                self.sendEmail('An Error accorded in search number: ' + str(self.timesChecked) + ' : ' + str(error), 'Error in XFileBlame while searching')
-        self.timesChecked += 1
+                if self.useExtension:  # extensions have to decide if they send mails themselves
+                    return 'error'
+                else:
+                    self.sendEmail('An Error accorded in search number: ' + str(self.timesChecked) + ' : ' + str(error), 'Error in XFileBlame while searching')
+
         if self.outputLevel >= 1:
             print(' '*56, end="\r")  # to protect the following from output of level2
             print('Search finished')
             print('results: \n' + self.results)
-        if not self.files_found:  # then no file was found
-            self.blameAgain()
+
+        if self.useExtension:
+            return self.files_found
         else:
-            self.oldFiles.extend(self.files_found)
-            self.files_found = []
-            self.sendEmail(self.results, 'XFileBlame has found new searched files')
+            if not self.files_found:  # then no file was found
+                self.blameAgain()
+            else:
+                self.oldFiles.extend(self.files_found)
+                self.files_found = []
+                self.sendEmail(self.results, 'XFileBlame has found new searched files')
 
     def blameAgain(self):
         if self.timetw != '':  # checks if a search should be repeated
@@ -114,4 +117,5 @@ class XFileBlameMa:
                 self.blameAgain()
         except Exception as error:
             print('failed to send Email ' + str(error))
-        self.blameAgain()
+        if not self.useExtension:
+            self.blameAgain()
