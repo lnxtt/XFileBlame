@@ -50,7 +50,7 @@ Example:
     XFB = XFileBlameMaster.XFileBlameMa(rootDirectory='/', extensionType=2, outputLevel=0, useExtension=True)
     xfiles = XFB.blameFiles()
     print(str(xfiles))
-To use this the XFileBlameMastwer.py must be in the same folder as your python file
+To use this the XFileBlameMaster.py must be in the same folder as your python file
 
 Note :
 
