@@ -36,7 +36,7 @@ Type giving arguments:
 To search in a non-standard directory, just write the directory path into the arguments.
 
 Example:
-python3 run.py / home / -i 300 -e foo@bar.com -s 1000 -o
+python3 run.py / home / -i 300 -e foo@bar.com -s 1000 -o 2
 
 Note :
 I am not responsible for illegal acts you do with this program.
