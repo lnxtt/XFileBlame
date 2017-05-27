@@ -40,7 +40,17 @@ To search in a non-standard directory, just write the directory path into the ar
 
 Example:
 
-    python3 run.py / home / -i 300 -e foo@bar.com -s 1000 -o
+    python3 run.py / home / -i 300 -e foo@bar.com -s 1000 -o 2
+# Extensions
+you can easily use XFileBlameMaster for your own project.
+
+Example:
+
+    import XFileBlameMaster
+    XFB = XFileBlameMaster.XFileBlameMa(rootDirectory='/', extensionType=2, outputLevel=0, useExtension=True)
+    xfiles = XFB.blameFiles()
+    print(str(xfiles))
+To use this the XFileBlameMastwer.py must be in the same folder as your python file
 
 Note :
 
