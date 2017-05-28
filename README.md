@@ -14,14 +14,14 @@ With:
      
    -i you set the interval (in seconds) in which a search will be repeated
   
-   -o XfileBlame will show you live output(Currently analysed directory/Last found file) - You will still see if a
-      search begins or ends(all found files will be printed if that happens)
+   -o you set which output you want to see
      
-   After -0 you can give the arguments[0,1,2]
+   After -o you must give the arguments[0,1,2]
    
     0 = only errors     
     1 = 0 + minimum output(search begin,end,results)
-    2 = all output
+    2 = all output (0+1+currently analyzed directory,live output when a file is found)
+    
     1 is default
 
 Type giving arguments:
