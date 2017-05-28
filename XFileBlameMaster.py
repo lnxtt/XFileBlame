@@ -39,28 +39,30 @@ class XFileBlameMa:
             print('looking for files in with extension: ' + str(tuple(self.fileExtensions)) + 'in ' + self.rootDirectory + ' time: ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 
         try:  # begin of the search itself
-            for file in self.scanDirectory(self.rootDirectory):  # goes to every directory in the given location and checks for searched files
-                if file.path in self.oldFiles:
-                    pass
-                else:
-                    change = False
-                    if self.outputLevel >= 2:
-                        print('checking directory: ' + str(entry.path)[:35], end="\r"),
-                    try:
-                        if os.path.getsize(file.path) > self.suspiciousSize:
-                            if not self.extensionType == 4:
-                                if file.name.endswith(tuple(self.fileExtensions)):
-                                    change = True
-                            else:
-                                change = True
-                    except Exception:  # to pass files with errors like: permission denied
+            for dirpath, dirnames, files in os.walk(self.rootDirectory):  # goes to every directory in the given location and checks for searched files
+                for f in files:
+                    filepath = os.path.join(dirpath, f)
+                    if filepath in self.oldFiles:
                         pass
-                    if change:  # prints live output of found files and adds them to result
-                        self.files_found.append(file.path)
-                        erg = (str(file.path) + ' ' + str(os.path.getsize(file.path) >> 20) + 'mb')
+                    else:
+                        change = False
                         if self.outputLevel >= 2:
-                            print('file found: ' + erg)
-                        self.results += erg + '\n'
+                            print('checking directory: ' + str(filepath)[:35], end="\r"),
+                        try:
+                            if os.path.getsize(filepath) > self.suspiciousSize:
+                                if not self.extensionType == 4:
+                                    if f.endswith(tuple(self.fileExtensions)):
+                                        change = True
+                                else:
+                                    change = True
+                        except Exception:  # e.g. Files to which the user has no right to check the size are omitted
+                            pass
+                        if change:  # prints live output of found files and adds them to result
+                            self.files_found.append(filepath)
+                            erg = (str(filepath) + ' ' + str(os.path.getsize(filepath) >> 20) + 'mb')
+                            if self.outputLevel >= 2:
+                                print('file found: ' + erg)
+                            self.results += erg + '\n'
 
         except Exception as error:  # handel's errors in search
             print('An Error accorded in search number: ' + str(self.timesChecked) + ' : ' + str(error))
@@ -73,7 +75,7 @@ class XFileBlameMa:
 
         if self.outputLevel >= 1:
             print(' '*56, end="\r")  # to protect the following from output of level2
-            print('Search finished')
+            print('Search finished ' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             print('results: \n' + self.results)
 
         if self.useExtension:
@@ -97,16 +99,6 @@ class XFileBlameMa:
             self.blameFiles()
         else:
             sys.exit(0)
-
-    def scanDirectory(self, path):  # scans the directory with os.scandir
-        try:    # to pass files with errors like: permission denied
-            for entry in os.scandir(path):
-                if entry.is_dir(follow_symlinks=False):
-                    yield from self.scanDirectory(entry.path)
-                else:
-                    yield entry
-        except Exception:
-            pass
 
     def sendEmail(self, message, title):
         try:
