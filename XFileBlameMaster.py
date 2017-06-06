@@ -9,6 +9,7 @@ class XFileBlameMa:
 
     oldFiles = []
     files_found = []
+    fileExtensions = []
     results = ''
     timesChecked = 0
     errorAccorded = False
@@ -18,7 +19,7 @@ class XFileBlameMa:
     loginEmail = 'foo@bar.com'
     loginPassword = 'yourpassword!!'
 
-    def __init__(self, rootDirectory='/', timetw='', emailContact='', suspiciousSize=35, extensionType=1, outputLevel=1, useExtension = False):
+    def __init__(self, rootDirectory='/', timetw='', emailContact='', suspiciousSize=0, extensionType=1, outputLevel=1, useExtension = False):
         self.rootDirectory = rootDirectory
         self.timetw = timetw
         self.extensionType = extensionType
@@ -27,11 +28,11 @@ class XFileBlameMa:
         self.outputLevel = int(outputLevel)
         self.useExtension = useExtension
         if extensionType == 1:
-            self.fileExtensions = ['.mp4', '.avi', '.mkv', '.wmv', '.ts']
+            self.fileExtensions = ['.mp4', '.avi', '.mkv', '.wmv', '.ts', '.mpeg', '.flv', '.svi', '.mov']
         elif extensionType == 2:
-            self.fileExtensions = ['.exe', '.bat', '.vbs', '.reg', '.vb']
+            self.fileExtensions = ['.exe', '.bat', '.vbs', '.reg', '.vb', '.jar', '.pif', '.msi', '.com', '.cmd', '.ws', '.vbe']
         elif extensionType == 3:
-            self.fileExtensions = ['.mp4', '.avi', '.mkv', '.wmv', '.ts', '.exe', '.bat', '.vbs', '.reg', '.vb']
+            self.fileExtensions = ['.mp4', '.avi', '.mkv', '.wmv', '.ts', '.mpeg', '.flv', '.svi', '.mov', '.exe', '.bat', '.vbs', '.reg', '.vb', '.jar', '.pif', '.msi', '.com', '.cmd', '.ws', '.vbe']
 
 
     def blameFiles(self):
